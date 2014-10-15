@@ -1,0 +1,7 @@
+﻿## Interface: 60000
+## Title: Bulk Buy
+## Version: @project-version@
+## Author: Choonster
+## Notes: Allows you to buy vendor items in quantities greater than a single stack size.
+
+core.lua

@@ -1,0 +1,6 @@
+﻿package-as: BulkBuy
+
+tools-used:
+    - findglobals
+	
+enable-nolib-creation: no
