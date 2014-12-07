@@ -75,7 +75,7 @@ function MerchantFrame_ConfirmExtendedBulkItemCost(itemButton, numToPurchase)
 		end
 	end
 	
-	if ( not usingCurrency and maxQuality <= ITEM_QUALITY_UNCOMMON ) then
+	if ( not usingCurrency and maxQuality <= LE_ITEM_QUALITY_UNCOMMON ) then
 		BulkBuyMerchantItem( itemButton:GetID(), numToPurchase );
 		return;
 	end
