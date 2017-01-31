@@ -1,6 +1,7 @@
 ## 1.05
 - Fix purchasing of items sold for non-gold currencies
 	- Thanks to Exhunt for posting this change on [Curse](https://mods.curse.com/addons/wow/bulk-buy?comment=12)
+- Bump TOC Interface version to 7.1
 
 ## 1.04
 - Fix "attempt to compare number with nil"
