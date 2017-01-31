@@ -6,14 +6,19 @@
 
 function BulkBuyMerchantItem(slot, amount)
 	local stackSize = GetMerchantItemMaxStack(slot)
+	local name, texture, price, quantity, numAvailable, isUsable, extendedCost = GetMerchantItemInfo(slot)
 	
-	while amount > stackSize do -- Buy as many full stacks as we can
-		BuyMerchantItem(slot, stackSize)
-		amount = amount - stackSize
-	end
-	
-	if amount > 0 then -- Buy any leftover items
-		BuyMerchantItem(slot, amount)
+	if price > 0 then -- Item is sold for gold, buy `amount` items
+		while amount > stackSize do -- Buy as many full stacks as we can
+			BuyMerchantItem(slot, stackSize)
+			amount = amount - stackSize
+		end
+		
+		if amount > 0 then -- Buy any leftover items
+			BuyMerchantItem(slot, amount)
+		end
+	else -- Item is sold for a non-gold currency and can only be bought in stacks of `quantity`, buy `amount * quantity` items
+		BuyMerchantItem(slot, amount * quantity)
 	end
 end
 
