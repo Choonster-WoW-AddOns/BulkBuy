@@ -1,3 +1,10 @@
+## 1.06
+- Fix bugs related to 7.2 merchant frame changes
+- Change how items sold for non-gold currencies are purchased:
+	- If an item is sold for a non-gold currency, the AddOn will now buy the largest multiple of the stack size sold by the merchant less than the amount entered in the stack split popup.
+	- The previous behaviour introduced in 1.05 was to buy the stack size sold by the merchant multiplied by the amount entered in the stack split popup.
+- Bump TOC Interface version to 7.2
+
 ## 1.05
 - Fix purchasing of items sold for non-gold currencies
 	- Thanks to Exhunt for posting this change on [Curse](https://mods.curse.com/addons/wow/bulk-buy?comment=12)
