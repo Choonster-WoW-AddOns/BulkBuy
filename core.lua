@@ -4,6 +4,17 @@ local MAX_STACK = 10000 -- The maximum stack size accepted by the stack split fr
 --END OF CONFIG--
 -----------------
 
+-- List globals here for Mikk's FindGlobals script.
+--
+-- FrameXML frames and functions:
+-- GLOBALS: MerchantFrame, MerchantFrame_ConfirmExtendedItemCost, StackSplitFrame, UpdateStackSplitFrame, OpenStackSplitFrame
+--
+-- WoW API functions:
+-- GLOBALS: BuyMerchantItem, GetMerchantItemInfo, GetMerchantItemMaxStack, IsModifiedClick
+--
+-- Lua libraries:
+-- GLOBALS: math
+
 local function BulkBuyMerchantItem(slot, amount)
 	local stackSize = GetMerchantItemMaxStack(slot)
 	local name, texture, price, quantity, numAvailable, isUsable, extendedCost = GetMerchantItemInfo(slot)
