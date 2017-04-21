@@ -4,7 +4,7 @@ local MAX_STACK = 10000 -- The maximum stack size accepted by the stack split fr
 --END OF CONFIG--
 -----------------
 
-function BulkBuyMerchantItem(slot, amount)
+local function BulkBuyMerchantItem(slot, amount)
 	local stackSize = GetMerchantItemMaxStack(slot)
 	local name, texture, price, quantity, numAvailable, isUsable, extendedCost = GetMerchantItemInfo(slot)
 	
