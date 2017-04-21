@@ -33,6 +33,14 @@ local function BulkBuyMerchantItem(slot, amount)
 	end
 end
 
+-- Wrapper around the default MerchantFrame_ConfirmExtendedItemCost function that temporarily replaces BuyMerchantItem with BulkBuyMerchantItem
+local function MerchantFrame_ConfirmExtendedBulkItemCost(itemButton, numToPurchase)
+	local originalBuyMerchantItem = BuyMerchantItem
+	BuyMerchantItem = BulkBuyMerchantItem
+	MerchantFrame_ConfirmExtendedItemCost(itemButton, numToPurchase)
+	BuyMerchantItem = originalBuyMerchantItem
+end
+
 local function MerchantItemButton_SplitStack(self, split)
 	if self.extendedCost then
 		MerchantFrame_ConfirmExtendedBulkItemCost(self, split)
@@ -50,66 +58,6 @@ end
 
 StaticPopupDialogs["CONFIRM_PURCHASE_TOKEN_ITEM"].OnAccept = function()
 	BulkBuyMerchantItem(MerchantFrame.itemIndex, MerchantFrame.count or 1)
-end
-	
--- Slightly modified version of the default MerchantFrame_ConfirmExtendedItemCost function that calls BulkBuyMerchantItem instead of BuyMerchantItem
-function MerchantFrame_ConfirmExtendedBulkItemCost(itemButton, numToPurchase)
-	print("itemButton:", itemButton, itemButton:GetName(), "numToPurchase:", numToPurchase)
-	local index = itemButton:GetID();
-	local itemsString;
-	if ( GetMerchantItemCostInfo(index) == 0 ) then
-		BulkBuyMerchantItem( itemButton:GetID(), numToPurchase );
-		return;
-	end
-	
-	MerchantFrame.itemIndex = index;
-	MerchantFrame.count = numToPurchase;
-	
-	local stackCount = itemButton.count or 1;
-	numToPurchase = numToPurchase or stackCount;
-	
-	local maxQuality = 0;
-	local usingCurrency = false;
-	for i=1, MAX_ITEM_COST, 1 do
-		local itemTexture, costItemCount, itemLink, currencyName = GetMerchantItemCostItem(index, i);
-		costItemCount = costItemCount * (numToPurchase / stackCount); -- cost per stack times number of stacks
-		if ( itemLink ) then
-			local _, _, itemQuality = GetItemInfo(itemLink);
-			maxQuality = math.max(itemQuality, maxQuality);
-			if ( itemsString ) then
-				itemsString = itemsString .. LIST_DELIMITER .. format(ITEM_QUANTITY_TEMPLATE, costItemCount, itemLink);
-			else
-				itemsString = format(ITEM_QUANTITY_TEMPLATE, costItemCount, itemLink);
-			end
-		elseif ( currencyName ) then
-			usingCurrency = true;
-			if ( itemsString ) then
-				itemsString = itemsString .. ", |T"..itemTexture..":0:0:0:-1|t ".. format(CURRENCY_QUANTITY_TEMPLATE, costItemCount, currencyName);
-			else
-				itemsString = " |T"..itemTexture..":0:0:0:-1|t "..format(CURRENCY_QUANTITY_TEMPLATE, costItemCount, currencyName);
-			end
-		end
-	end
-	
-	if ( not usingCurrency and maxQuality <= LE_ITEM_QUALITY_UNCOMMON ) then
-		BulkBuyMerchantItem( itemButton:GetID(), numToPurchase );
-		return;
-	end
-	
-	
-	local itemName = "YOU HAVE FOUND A BUG!";
-	local itemQuality = 1;
-	local _;
-	local r, g, b = 1, 1, 1;
-	if(itemButton.link) then
-		itemName, _, itemQuality = GetItemInfo(itemButton.link);
-		r, g, b = GetItemQualityColor(itemQuality); 
-	elseif(itemName) then		-- This is the case for a currency, which don't support links yet
-		itemName = itemButton.name;
-		r, g, b = GetItemQualityColor(1); 
-	end
-	
-	StaticPopup_Show("CONFIRM_PURCHASE_TOKEN_ITEM", itemsString, "", {["texture"] = itemButton.texture, ["name"] = itemName, ["color"] = {r, g, b, 1}, ["link"] = itemButton.link, ["index"] = index, ["count"] = numToPurchase});
 end
 
 local function MerchantItemButton_OnModifiedClick_Hook(self, button)
