@@ -1,4 +1,4 @@
-﻿local MAX_STACK = 10000 -- The maximum stack size accepted by the stack split frame.
+local MAX_STACK = 10000 -- The maximum stack size accepted by the stack split frame.
 
 -----------------
 --END OF CONFIG--
