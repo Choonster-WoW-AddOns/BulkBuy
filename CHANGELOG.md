@@ -1,3 +1,8 @@
+## 1.07
+- Bump TOC Interface version to 8.0
+- Add .travis.yml file and TOC properties for the BigWigs packager script
+	- https://www.wowinterface.com/forums/showthread.php?t=55801
+
 ## 1.06
 - Fix bugs related to 7.2 merchant frame changes
 - Change how items sold for non-gold currencies are purchased:
