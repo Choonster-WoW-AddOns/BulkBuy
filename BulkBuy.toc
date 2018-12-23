@@ -1,4 +1,4 @@
-﻿## Interface: 80000
+﻿## Interface: 80100
 ## Title: Bulk Buy
 ## Version: @project-version@
 ## Author: Choonster
