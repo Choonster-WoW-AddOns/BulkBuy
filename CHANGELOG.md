@@ -1,3 +1,9 @@
+## 1.08
+- Bump TOC Interface version to 8.1
+- Update to account for 8.1 stack split frame changes
+	- When buying an item sold in stacks greater than 1, the stack split frame will now allow you to buy any amount (like in older versions); not just multiples of the stack count.
+	- The left and right buttons will now decrement/increment by 1 by default or by the stack count when the Split Stack modifier (Shift) is held.
+
 ## 1.07
 - Bump TOC Interface version to 8.0
 - Add .travis.yml file and TOC properties for the BigWigs packager script
