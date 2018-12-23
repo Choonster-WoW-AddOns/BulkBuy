@@ -7,10 +7,13 @@ local MAX_STACK = 10000 -- The maximum stack size accepted by the stack split fr
 -- List globals here for Mikk's FindGlobals script.
 --
 -- FrameXML frames and functions:
--- GLOBALS: MerchantFrame, MerchantFrame_ConfirmExtendedItemCost, StackSplitFrame, UpdateStackSplitFrame, OpenStackSplitFrame
+-- GLOBALS: MerchantFrame, MerchantFrame_ConfirmExtendedItemCost, StackSplitFrame
 --
 -- WoW API functions:
 -- GLOBALS: BuyMerchantItem, GetMerchantItemInfo, GetMerchantItemMaxStack, IsModifiedClick
+--
+-- Global strings:
+-- GLOBALS: STACKS
 --
 -- Lua libraries:
 -- GLOBALS: math
@@ -68,14 +71,69 @@ StaticPopupDialogs["CONFIRM_PURCHASE_NONREFUNDABLE_ITEM"].OnAccept = ConfirmPopu
 
 local function MerchantItemButton_OnModifiedClick_Hook(self, button)
 	if self.hasStackSplit == 1 then
-		UpdateStackSplitFrame(MAX_STACK)
+		StackSplitFrame:UpdateStackSplitFrame(MAX_STACK)
+		StackSplitFrame.BulkBuy_stackCount = StackSplitFrame.minSplit
 		StackSplitFrame.minSplit = 1
 	elseif MerchantFrame.selectedTab == 1 and IsModifiedClick("SPLITSTACK") then
 		local _, _, _, stackCount, _, _, _, extendedCost = GetMerchantItemInfo(self:GetID())
 		if stackCount > 1 and extendedCost then return end
 		
-		OpenStackSplitFrame(MAX_STACK, self, "BOTTOMLEFT", "TOPLEFT")
+		StackSplitFrame:OpenStackSplitFrame(MAX_STACK, self, "BOTTOMLEFT", "TOPLEFT", stackCount)
 	end
 end
 
 hooksecurefunc("MerchantItemButton_OnModifiedClick", MerchantItemButton_OnModifiedClick_Hook)
+
+local StackSplitMixinHooks = {}
+
+function StackSplitMixinHooks:OpenStackSplitFrame()
+	self.BulkBuy_stackCount = nil
+end
+
+function StackSplitMixinHooks:UpdateStackText()
+	if self.isMultiStack and self.BulkBuy_stackCount then
+		self.StackSplitText:SetText(STACKS:format(math.ceil(self.split / self.BulkBuy_stackCount)))
+	end
+end
+
+for name, method in pairs(StackSplitMixinHooks) do
+	hooksecurefunc(StackSplitFrame, name, method)
+end
+
+local function StackSplitLeftButton_OnClick()
+	if StackSplitFrame.split == StackSplitFrame.minSplit then
+		return
+	end
+
+	-- If the Split Stack modifier is held, decrement by the stackCount; else decrement by minSplit
+	StackSplitFrame.split = StackSplitFrame.split - (IsModifiedClick("SPLITSTACK") and StackSplitFrame.BulkBuy_stackCount or StackSplitFrame.minSplit)
+	StackSplitFrame.split = math.max(StackSplitFrame.split, StackSplitFrame.minSplit)
+	StackSplitFrame:UpdateStackText()
+
+	if StackSplitFrame.split == StackSplitFrame.minSplit then
+		StackSplitFrame.LeftButton:Disable()
+	end
+	
+	StackSplitFrame.RightButton:Enable()
+end
+
+StackSplitFrame.LeftButton:SetScript("OnClick", StackSplitLeftButton_OnClick)
+
+local function StackSplitRightButton_OnClick()
+	if StackSplitFrame.split == StackSplitFrame.maxStack then
+		return
+	end
+
+	-- If the Split Stack modifier is held, increment by stackCount; else increment by minSplit
+	StackSplitFrame.split = StackSplitFrame.split + (IsModifiedClick("SPLITSTACK") and StackSplitFrame.BulkBuy_stackCount or StackSplitFrame.minSplit)
+	StackSplitFrame.split = math.min(StackSplitFrame.split, StackSplitFrame.maxStack)
+	StackSplitFrame:UpdateStackText()
+
+	if StackSplitFrame.split == StackSplitFrame.maxStack then
+		StackSplitFrame.RightButton:Disable()
+	end
+	
+	StackSplitFrame.LeftButton:Enable()
+end
+
+StackSplitFrame.RightButton:SetScript("OnClick", StackSplitRightButton_OnClick)
