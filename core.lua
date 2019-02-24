@@ -27,19 +27,19 @@ end
 local function BulkBuyMerchantItem(slot, amount)
 	local stackSize = GetMerchantItemMaxStack(slot)
 	local name, texture, price, stackCount, numAvailable, isPurchasable, isUsable, extendedCost = GetMerchantItemInfo(slot)
-	
+
 	-- If the item is sold for a non-gold currency and can only be bought in stacks of `stackCount`, buy the largest multiple of `stackCount` less than `amount` possible.
-	if price <= 0 then 
+	if price <= 0 then
 		amount = math.floor(amount / stackCount) * stackCount
 	end
-	
+
 	-- Otherwise the item is sold for gold, so buy `amount` items
-	
+
 	while amount > stackSize do -- Buy as many full stacks as we can
 		_BuyMerchantItem(slot, stackSize)
 		amount = amount - stackSize
 	end
-		
+
 	if amount > 0 then -- Buy any leftover items
 		_BuyMerchantItem(slot, amount)
 	end
@@ -85,7 +85,7 @@ local function MerchantItemButton_OnModifiedClick_Hook(self, button)
 	elseif MerchantFrame.selectedTab == 1 and IsModifiedClick("SPLITSTACK") then
 		local _, _, _, stackCount, _, _, _, extendedCost = GetMerchantItemInfo(self:GetID())
 		if stackCount > 1 and extendedCost then return end
-		
+
 		StackSplitFrame:OpenStackSplitFrame(MAX_STACK, self, "BOTTOMLEFT", "TOPLEFT", stackCount)
 	end
 end
@@ -121,7 +121,7 @@ local function StackSplitLeftButton_OnClick()
 	if StackSplitFrame.split == StackSplitFrame.minSplit then
 		StackSplitFrame.LeftButton:Disable()
 	end
-	
+
 	StackSplitFrame.RightButton:Enable()
 end
 
@@ -140,7 +140,7 @@ local function StackSplitRightButton_OnClick()
 	if StackSplitFrame.split == StackSplitFrame.maxStack then
 		StackSplitFrame.RightButton:Disable()
 	end
-	
+
 	StackSplitFrame.LeftButton:Enable()
 end
 
