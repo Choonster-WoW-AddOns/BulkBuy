@@ -18,6 +18,12 @@ local MAX_STACK = 10000 -- The maximum stack size accepted by the stack split fr
 -- Lua libraries:
 -- GLOBALS: math
 
+local _BuyMerchantItem
+
+local function SetBuyMerchantItem()
+	_BuyMerchantItem = _G.BuyMerchantItem
+end
+
 local function BulkBuyMerchantItem(slot, amount)
 	local stackSize = GetMerchantItemMaxStack(slot)
 	local name, texture, price, stackCount, numAvailable, isPurchasable, isUsable, extendedCost = GetMerchantItemInfo(slot)
@@ -30,27 +36,28 @@ local function BulkBuyMerchantItem(slot, amount)
 	-- Otherwise the item is sold for gold, so buy `amount` items
 	
 	while amount > stackSize do -- Buy as many full stacks as we can
-		BuyMerchantItem(slot, stackSize)
+		_BuyMerchantItem(slot, stackSize)
 		amount = amount - stackSize
 	end
 		
 	if amount > 0 then -- Buy any leftover items
-		BuyMerchantItem(slot, amount)
+		_BuyMerchantItem(slot, amount)
 	end
 end
 
 -- Wrapper around the default MerchantFrame_ConfirmExtendedItemCost function that temporarily replaces BuyMerchantItem with BulkBuyMerchantItem
 local function MerchantFrame_ConfirmExtendedBulkItemCost(itemButton, numToPurchase)
-	local originalBuyMerchantItem = BuyMerchantItem
-	BuyMerchantItem = BulkBuyMerchantItem
+	SetBuyMerchantItem()
+	_G.BuyMerchantItem = BulkBuyMerchantItem
 	MerchantFrame_ConfirmExtendedItemCost(itemButton, numToPurchase)
-	BuyMerchantItem = originalBuyMerchantItem
+	_G.BuyMerchantItem = _BuyMerchantItem
 end
 
 local function MerchantItemButton_SplitStack(self, split)
 	if self.extendedCost then
 		MerchantFrame_ConfirmExtendedBulkItemCost(self, split)
 	elseif split > 0 then
+		SetBuyMerchantItem()
 		BulkBuyMerchantItem(self:GetID(), split)
 	end
 end
@@ -63,6 +70,7 @@ for i = 1, 10 do
 end
 
 local function ConfirmPopup_OnAccept()
+	SetBuyMerchantItem()
 	BulkBuyMerchantItem(MerchantFrame.itemIndex, MerchantFrame.count or 1)
 end
 
