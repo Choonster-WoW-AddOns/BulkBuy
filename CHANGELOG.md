@@ -1,3 +1,6 @@
+## 1.09
+- Fix stack overflow error when buying items for non-gold currencies
+
 ## 1.08
 - Bump TOC Interface version to 8.1
 - Update to account for 8.1 stack split frame changes
