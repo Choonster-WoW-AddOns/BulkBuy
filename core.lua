@@ -39,11 +39,11 @@ end
 local _BuyMerchantItem
 
 local function SetBuyMerchantItem()
-	log("SetBuyMerchantItem", "Current value = %s", _BuyMerchantItem)
+	log("SetBuyMerchantItem", "Current value = %s", tostring(_BuyMerchantItem))
 
 	_BuyMerchantItem = _G.BuyMerchantItem
 
-	log("SetBuyMerchantItem", "New value = %s", _BuyMerchantItem)
+	log("SetBuyMerchantItem", "New value = %s", tostring(_BuyMerchantItem))
 end
 
 local function BulkBuyMerchantItem(slot, amount)
@@ -82,7 +82,7 @@ local function MerchantFrame_ConfirmExtendedBulkItemCost(itemButton, numToPurcha
 	log("MerchantFrame_ConfirmExtendedBulkItemCost", "Replacing _G.BuyMerchantItem with BulkBuyMerchantItem")
 	_G.BuyMerchantItem = BulkBuyMerchantItem
 
-	log("MerchantFrame_ConfirmExtendedBulkItemCost", "Calling MerchantFrame_ConfirmExtendedItemCost(%s, %d)", itemButton.GetName and itemButton:GetName() or itemButton, numToPurchase)
+	log("MerchantFrame_ConfirmExtendedBulkItemCost", "Calling MerchantFrame_ConfirmExtendedItemCost(%s, %d)", itemButton.GetName and itemButton:GetName() or tostring(itemButton), numToPurchase)
 	MerchantFrame_ConfirmExtendedItemCost(itemButton, numToPurchase)
 
 	log("MerchantFrame_ConfirmExtendedBulkItemCost", "Restoring _G.BuyMerchantItem")
@@ -110,7 +110,7 @@ for i = 1, 10 do
 end
 
 local function ConfirmPopup_OnAccept()
-	log("ConfirmPopup_OnAccept", "itemIndex = %d, count = %d", itemIndex, count)
+	log("ConfirmPopup_OnAccept", "itemIndex = %d, count = %s", itemIndex, tostring(count))
 
 	SetBuyMerchantItem()
 	BulkBuyMerchantItem(MerchantFrame.itemIndex, MerchantFrame.count or 1)
