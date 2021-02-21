@@ -1,5 +1,8 @@
 ﻿package-as: BulkBuy
 
+optional-dependencies:
+    - debuglog
+
 tools-used:
     - findglobals
 

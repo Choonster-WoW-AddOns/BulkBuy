@@ -3,6 +3,7 @@
 ## Version: @project-version@
 ## Author: Choonster
 ## Notes: Allows you to buy vendor items in quantities greater than a single stack size.
+## OptionalDeps: _DebugLog
 
 ## X-Curse-Project-ID: 43523
 ## X-WoWI-ID: 21442

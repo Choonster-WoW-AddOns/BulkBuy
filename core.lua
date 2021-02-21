@@ -20,10 +20,15 @@ local MAX_STACK = 10000 -- The maximum stack size accepted by the stack split fr
 
 -- @debug@
 local function log(func, message, ...)
+	if DLAPI then
+		DLAPI.DebugLog("BulkBuy", func .. "~" .. message, ...)
+		return
+	end
+
 	print("BulkBuy", func, message:format(...))
 end
 
-local function concat(...)
+local function concat(...)	
 	return (" "):join(tostringall(...))
 end
 -- @end-debug@
