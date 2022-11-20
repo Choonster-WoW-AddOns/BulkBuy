@@ -1,3 +1,6 @@
+## 1.10
+- Bump TOC Interface version to 10.0.2
+
 ## 1.09
 - Fix stack overflow error when buying items for non-gold currencies
 
