@@ -1,4 +1,7 @@
-﻿## Interface: 80100
+﻿## Interface: 100002
+## Interface-Classic: 11403
+## Interface-BCC: 20504
+## Interface-Wrath: 30400
 ## Title: Bulk Buy
 ## Version: @project-version@
 ## Author: Choonster
