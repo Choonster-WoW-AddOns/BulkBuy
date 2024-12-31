@@ -6,3 +6,5 @@ tools-used:
 manual-changelog:
    filename: CHANGELOG.md
    markup-type: markdown
+
+enable-toc-creation: yes
