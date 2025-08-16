@@ -1,3 +1,6 @@
+## 1.11
+- Bump TOC Interface version for Retail, Classic, WotLK Classic, Cataclysm Classic and MoP Classic
+
 ## 1.10
 - Bump TOC Interface version to 10.0.2
 
