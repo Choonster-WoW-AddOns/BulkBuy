@@ -207,7 +207,7 @@ local function StackSplitLeftButton_OnClick()
 	StackSplitFrame.RightButton:Enable()
 end
 
-StackSplitFrame.LeftButton:SetScript("OnClick", StackSplitLeftButton_OnClick)
+(StackSplitFrame.LeftButton or StackSplitLeftButton):SetScript("OnClick", StackSplitLeftButton_OnClick)
 
 local function StackSplitRightButton_OnClick()
 	if StackSplitFrame.split == StackSplitFrame.maxStack then
@@ -229,4 +229,4 @@ local function StackSplitRightButton_OnClick()
 	StackSplitFrame.LeftButton:Enable()
 end
 
-StackSplitFrame.RightButton:SetScript("OnClick", StackSplitRightButton_OnClick)
+(StackSplitFrame.RightButton or StackSplitRightButton):SetScript("OnClick", StackSplitRightButton_OnClick)
