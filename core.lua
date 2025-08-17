@@ -39,7 +39,7 @@ end
 
 local C_MerchantFrame_GetItemInfo
 
-if C_MerchantFrame then
+if C_MerchantFrame and C_MerchantFrame.GetItemInfo then
 	--- Returns info for a merchant item
 	C_MerchantFrame_GetItemInfo = C_MerchantFrame.GetItemInfo
 else
