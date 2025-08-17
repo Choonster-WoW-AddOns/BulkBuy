@@ -4,7 +4,7 @@ local MAX_STACK = 10000 -- The maximum stack size accepted by the stack split fr
 --END OF CONFIG--
 -----------------
 
---@debug
+--@debug@
 -- Type annotations for Lua Language Server
 if false then
 	--- Classic-only
@@ -28,7 +28,7 @@ if false then
 	---@field extendedCost boolean
 	---@field showNonrefundablePrompt boolean
 end
---@end-debug
+--@end-debug@
 
 ---@type fun(index: number, quantity?: number)
 local _BuyMerchantItem
