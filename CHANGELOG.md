@@ -1,51 +1,64 @@
 ## 1.12
+
 - Fix errors in Classic
-	- Thanks to Road-block for reporting the errors on [GitHub](https://github.com/Choonster-WoW-AddOns/BulkBuy/issues/2) and testing the changes
+  - Thanks to Road-block for reporting the errors on [GitHub](https://github.com/Choonster-WoW-AddOns/BulkBuy/issues/2) and testing the changes
 
 ## 1.11
+
 - Bump TOC Interface version for Retail, Classic, WotLK Classic, Cataclysm Classic and MoP Classic
 
 ## 1.10
+
 - Bump TOC Interface version to 10.0.2
 
 ## 1.09
+
 - Fix stack overflow error when buying items for non-gold currencies
 
 ## 1.08
+
 - Bump TOC Interface version to 8.1
 - Update to account for 8.1 stack split frame changes
-	- When buying an item sold in stacks greater than 1, the stack split frame will now allow you to buy any amount (like in older versions); not just multiples of the stack count.
-	- The left and right buttons will now decrement/increment by 1 by default or by the stack count when the Split Stack modifier (Shift) is held.
+  - When buying an item sold in stacks greater than 1, the stack split frame will now allow you to buy any amount (like in older versions); not just multiples of the stack count.
+  - The left and right buttons will now decrement/increment by 1 by default or by the stack count when the Split Stack modifier (Shift) is held.
 
 ## 1.07
+
 - Bump TOC Interface version to 8.0
 - Add .travis.yml file and TOC properties for the BigWigs packager script
-	- https://www.wowinterface.com/forums/showthread.php?t=55801
+  - https://www.wowinterface.com/forums/showthread.php?t=55801
 
 ## 1.06
+
 - Fix bugs related to 7.2 merchant frame changes
 - Change how items sold for non-gold currencies are purchased:
-	- If an item is sold for a non-gold currency, the AddOn will now buy the largest multiple of the stack size sold by the merchant less than the amount entered in the stack split popup.
-	- The previous behaviour introduced in 1.05 was to buy the stack size sold by the merchant multiplied by the amount entered in the stack split popup.
+  - If an item is sold for a non-gold currency, the AddOn will now buy the largest multiple of the stack size sold by the merchant less than the amount entered in the stack split popup.
+  - The previous behaviour introduced in 1.05 was to buy the stack size sold by the merchant multiplied by the amount entered in the stack split popup.
 - Bump TOC Interface version to 7.2
 
 ## 1.05
+
 - Fix purchasing of items sold for non-gold currencies
-	- Thanks to Exhunt for posting this change on [Curse](https://mods.curse.com/addons/wow/bulk-buy?comment=12)
+  - Thanks to Exhunt for posting this change on [Curse](https://mods.curse.com/addons/wow/bulk-buy?comment=12)
 - Bump TOC Interface version to 7.1
 
 ## 1.04
+
 - Fix "attempt to compare number with nil"
-    - `ITEM_QUALITY` constants were changed to Lua enums (`LE_ITEM_QUALITY`) in 6.0
+  - `ITEM_QUALITY` constants were changed to Lua enums (`LE_ITEM_QUALITY`) in 6.0
 
 ## 1.03
+
 - Create GitHub repository for AddOn
 
 ## 1.02
-- Buying items that cost proper currencies like Justice Points should now be fixed. This issue wasn't affecting items bought with other items like Inks from the Ink Trader. 
+
+- Buying items that cost proper currencies like Justice Points should now be fixed. This issue wasn't affecting items bought with other items like Inks from the Ink Trader.
 
 ## 1.01
-- Added support for bulk buying items that cost non-gold currencies. 
+
+- Added support for bulk buying items that cost non-gold currencies.
 
 ## 1.00
+
 - AddOn Created!
