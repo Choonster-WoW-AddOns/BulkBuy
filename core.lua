@@ -187,7 +187,10 @@ else
 	end
 end
 
-local function StackSplitLeftButton_OnClick()
+local StackSplitFrame_LeftButton = StackSplitFrame.LeftButton or StackSplitLeftButton
+local StackSplitFrame_RightButton = StackSplitFrame.RightButton or StackSplitRightButton
+
+local function StackSplitFrame_LeftButton_OnClick()
 	if StackSplitFrame.split == StackSplitFrame.minSplit then
 		return
 	end
@@ -199,17 +202,15 @@ local function StackSplitLeftButton_OnClick()
 	StackSplitFrame_UpdateStackText()
 
 	if StackSplitFrame.split == StackSplitFrame.minSplit then
-		local button = StackSplitFrame.LeftButton or StackSplitLeftButton
-
-		button:Disable()
+		StackSplitFrame_LeftButton:Disable()
 	end
 
-	StackSplitFrame.RightButton:Enable()
+	StackSplitFrame_RightButton:Enable()
 end
 
-(StackSplitFrame.LeftButton or StackSplitLeftButton):SetScript("OnClick", StackSplitLeftButton_OnClick)
+StackSplitFrame_LeftButton:SetScript("OnClick", StackSplitFrame_LeftButton_OnClick)
 
-local function StackSplitRightButton_OnClick()
+local function StackSplitFrame_RightButton_OnClick()
 	if StackSplitFrame.split == StackSplitFrame.maxStack then
 		return
 	end
@@ -221,12 +222,10 @@ local function StackSplitRightButton_OnClick()
 	StackSplitFrame_UpdateStackText()
 
 	if StackSplitFrame.split == StackSplitFrame.maxStack then
-		local button = StackSplitFrame.RightButton or StackSplitRightButton
-
-		button:Disable()
+		StackSplitFrame_RightButton:Disable()
 	end
 
-	StackSplitFrame.LeftButton:Enable()
+	StackSplitFrame_LeftButton:Enable()
 end
 
-(StackSplitFrame.RightButton or StackSplitRightButton):SetScript("OnClick", StackSplitRightButton_OnClick)
+StackSplitFrame_RightButton:SetScript("OnClick", StackSplitFrame_RightButton_OnClick)
