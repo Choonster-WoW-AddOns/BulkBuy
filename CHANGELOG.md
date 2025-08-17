@@ -1,3 +1,7 @@
+## 1.12
+- Fix errors in Classic
+	- Thanks to Road-block for reporting the errors on [GitHub](https://github.com/Choonster-WoW-AddOns/BulkBuy/issues/2) and testing the changes
+
 ## 1.11
 - Bump TOC Interface version for Retail, Classic, WotLK Classic, Cataclysm Classic and MoP Classic
 
