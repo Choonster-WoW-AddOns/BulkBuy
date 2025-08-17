@@ -4,48 +4,93 @@ local MAX_STACK = 10000 -- The maximum stack size accepted by the stack split fr
 --END OF CONFIG--
 -----------------
 
--- List globals here for Mikk's FindGlobals script.
---
--- FrameXML frames and functions:
--- GLOBALS: MerchantFrame, MerchantFrame_ConfirmExtendedItemCost, StackSplitFrame
---
--- WoW API functions:
--- GLOBALS: BuyMerchantItem, GetMerchantItemInfo, GetMerchantItemMaxStack, IsModifiedClick
---
--- Global strings:
--- GLOBALS: STACKS
---
--- Lua libraries:
--- GLOBALS: math
+--@debug
+-- Type annotations for Lua Language Server
+if false then
+	--- Classic-only
+	---@param maxStack number
+	_G.UpdateStackSplitFrame = function(maxStack) end
 
+	--- Classic-only
+	---@type FontString
+	_G.StackSplitText = nil
+
+	--- Classic-only
+	---@type Button
+	_G.StackSplitLeftButton = nil
+
+	--- Classic-only
+	---@type Button
+	_G.StackSplitRightButton = nil
+
+	---@class MerchantItemButton : Button
+	---@field hasStackSplit number
+	---@field extendedCost boolean
+	---@field showNonrefundablePrompt boolean
+end
+--@end-debug
+
+---@type fun(index: number, quantity?: number)
 local _BuyMerchantItem
 
 local function SetBuyMerchantItem()
 	_BuyMerchantItem = _G.BuyMerchantItem
 end
 
-local function BulkBuyMerchantItem(slot, amount)
-	local stackSize = GetMerchantItemMaxStack(slot)
-	local name, texture, price, stackCount, numAvailable, isPurchasable, isUsable, extendedCost = GetMerchantItemInfo(slot)
+local C_MerchantFrame_GetItemInfo
+
+if C_MerchantFrame then
+	--- Returns info for a merchant item
+	C_MerchantFrame_GetItemInfo = C_MerchantFrame.GetItemInfo
+else
+	--- Returns info for a merchant item
+	---@param index number
+	---@return MerchantItemInfo info
+	C_MerchantFrame_GetItemInfo = function(index)
+		local name, texture, price, stackCount, numAvailable, isPurchasable, isUsable, extendedCost, currencyID, spellID =
+			GetMerchantItemInfo(index)
+
+		return {
+			name = name,
+			texture = texture,
+			price = price,
+			stackCount = stackCount,
+			numAvailable = numAvailable,
+			isPurchasable = isPurchasable,
+			isUsable = isUsable,
+			hasExtendedCost = extendedCost,
+			currencyID = currencyID,
+			spellID = spellID
+		}
+	end
+end
+
+---@param index number
+---@param quantity number
+local function BulkBuyMerchantItem(index, quantity)
+	local stackSize = GetMerchantItemMaxStack(index)
+	local info      = C_MerchantFrame_GetItemInfo(index)
 
 	-- If the item is sold for a non-gold currency and can only be bought in stacks of `stackCount`, buy the largest multiple of `stackCount` less than `amount` possible.
-	if price <= 0 then
-		amount = math.floor(amount / stackCount) * stackCount
+	if info.price <= 0 then
+		quantity = math.floor(quantity / info.stackCount) * info.stackCount
 	end
 
 	-- Otherwise the item is sold for gold, so buy `amount` items
 
-	while amount > stackSize do -- Buy as many full stacks as we can
-		_BuyMerchantItem(slot, stackSize)
-		amount = amount - stackSize
+	while quantity > stackSize do -- Buy as many full stacks as we can
+		_BuyMerchantItem(index, stackSize)
+		quantity = quantity - stackSize
 	end
 
-	if amount > 0 then -- Buy any leftover items
-		_BuyMerchantItem(slot, amount)
+	if quantity > 0 then -- Buy any leftover items
+		_BuyMerchantItem(index, quantity)
 	end
 end
 
--- Wrapper around the default MerchantFrame_ConfirmExtendedItemCost function that temporarily replaces BuyMerchantItem with BulkBuyMerchantItem
+--- Wrapper around the default MerchantFrame_ConfirmExtendedItemCost function that temporarily replaces BuyMerchantItem with BulkBuyMerchantItem
+---@param itemButton MerchantItemButton
+---@param numToPurchase number
 local function MerchantFrame_ConfirmExtendedBulkItemCost(itemButton, numToPurchase)
 	SetBuyMerchantItem()
 	_G.BuyMerchantItem = BulkBuyMerchantItem
@@ -53,8 +98,12 @@ local function MerchantFrame_ConfirmExtendedBulkItemCost(itemButton, numToPurcha
 	_G.BuyMerchantItem = _BuyMerchantItem
 end
 
+---@param self MerchantItemButton
+---@param split number
 local function MerchantItemButton_SplitStack(self, split)
 	if self.extendedCost then
+		MerchantFrame_ConfirmExtendedBulkItemCost(self, split)
+	elseif self.showNonrefundablePrompt then
 		MerchantFrame_ConfirmExtendedBulkItemCost(self, split)
 	elseif split > 0 then
 		SetBuyMerchantItem()
@@ -65,7 +114,7 @@ end
 -- Overwrite the default UI's SplitStack method
 -- There are 12 MerchantItemXItemButtons, but the merchant frame only uses the first 10; the others are only used by the buyback window
 for i = 1, 10 do
-	local button = _G["MerchantItem".. i .."ItemButton"]
+	local button = _G["MerchantItem" .. i .. "ItemButton"]
 	button.SplitStack = MerchantItemButton_SplitStack
 end
 
@@ -77,35 +126,65 @@ end
 StaticPopupDialogs["CONFIRM_PURCHASE_TOKEN_ITEM"].OnAccept = ConfirmPopup_OnAccept
 StaticPopupDialogs["CONFIRM_PURCHASE_NONREFUNDABLE_ITEM"].OnAccept = ConfirmPopup_OnAccept
 
-local function MerchantItemButton_OnModifiedClick_Hook(self, button)
+---@param self MerchantItemButton
+local function MerchantItemButton_OnModifiedClick_Hook(self, _)
 	if self.hasStackSplit == 1 then
-		StackSplitFrame:UpdateStackSplitFrame(MAX_STACK)
+		if StackSplitFrame.UpdateStackSplitFrame then
+			StackSplitFrame:UpdateStackSplitFrame(MAX_STACK)
+		else
+			UpdateStackSplitFrame(MAX_STACK)
+		end
+
 		StackSplitFrame.BulkBuy_stackCount = StackSplitFrame.minSplit
 		StackSplitFrame.minSplit = 1
 	elseif MerchantFrame.selectedTab == 1 and IsModifiedClick("SPLITSTACK") then
-		local _, _, _, stackCount, _, _, _, extendedCost = GetMerchantItemInfo(self:GetID())
-		if stackCount > 1 and extendedCost then return end
+		local info = C_MerchantFrame_GetItemInfo(self:GetID())
+		if info.stackCount > 1 and info.hasExtendedCost then return end
 
-		StackSplitFrame:OpenStackSplitFrame(MAX_STACK, self, "BOTTOMLEFT", "TOPLEFT", stackCount)
+		StackSplitFrame:OpenStackSplitFrame(MAX_STACK, self, "BOTTOMLEFT", "TOPLEFT", info.stackCount)
 	end
 end
 
 hooksecurefunc("MerchantItemButton_OnModifiedClick", MerchantItemButton_OnModifiedClick_Hook)
 
-local StackSplitMixinHooks = {}
+if StackSplitMixin then
+	local StackSplitMixinHooks = {}
 
-function StackSplitMixinHooks:OpenStackSplitFrame()
-	self.BulkBuy_stackCount = nil
-end
-
-function StackSplitMixinHooks:UpdateStackText()
-	if self.isMultiStack and self.BulkBuy_stackCount then
-		self.StackSplitText:SetText(STACKS:format(math.ceil(self.split / self.BulkBuy_stackCount)))
+	function StackSplitMixinHooks:OpenStackSplitFrame()
+		self.BulkBuy_stackCount = nil
 	end
+
+	function StackSplitMixinHooks:UpdateStackText()
+		if self.isMultiStack and self.BulkBuy_stackCount then
+			self.StackSplitText:SetText(STACKS:format(math.ceil(self.split / self.BulkBuy_stackCount)))
+		end
+	end
+
+	for name, method in pairs(StackSplitMixinHooks) do
+		hooksecurefunc(StackSplitFrame, name, method)
+	end
+else
+	hooksecurefunc("OpenStackSplitFrame", function()
+		StackSplitFrame.BulkBuy_stackCount = nil
+	end)
+
+	hooksecurefunc("UpdateStackSplitFrame", function()
+		if StackSplitFrame.isMultiStack and StackSplitFrame.BulkBuy_stackCount then
+			StackSplitText:SetText(STACKS:format(math.ceil(StackSplitFrame.split / StackSplitFrame.BulkBuy_stackCount)))
+		end
+	end)
 end
 
-for name, method in pairs(StackSplitMixinHooks) do
-	hooksecurefunc(StackSplitFrame, name, method)
+local StackSplitFrame_UpdateStackText
+
+if StackSplitFrame.UpdateStackText then
+	StackSplitFrame_UpdateStackText = function()
+		StackSplitFrame:UpdateStackText()
+	end
+else
+	StackSplitFrame_UpdateStackText = function()
+		StackSplitText:SetText(tostring(StackSplitFrame.split));
+	end
 end
 
 local function StackSplitLeftButton_OnClick()
@@ -114,12 +193,15 @@ local function StackSplitLeftButton_OnClick()
 	end
 
 	-- If the Split Stack modifier is held, decrement by the stackCount; else decrement by minSplit
-	StackSplitFrame.split = StackSplitFrame.split - (IsModifiedClick("SPLITSTACK") and StackSplitFrame.BulkBuy_stackCount or StackSplitFrame.minSplit)
+	StackSplitFrame.split = StackSplitFrame.split -
+		(IsModifiedClick("SPLITSTACK") and StackSplitFrame.BulkBuy_stackCount or StackSplitFrame.minSplit)
 	StackSplitFrame.split = math.max(StackSplitFrame.split, StackSplitFrame.minSplit)
-	StackSplitFrame:UpdateStackText()
+	StackSplitFrame_UpdateStackText()
 
 	if StackSplitFrame.split == StackSplitFrame.minSplit then
-		StackSplitFrame.LeftButton:Disable()
+		local button = StackSplitFrame.LeftButton or StackSplitLeftButton
+
+		button:Disable()
 	end
 
 	StackSplitFrame.RightButton:Enable()
@@ -133,12 +215,15 @@ local function StackSplitRightButton_OnClick()
 	end
 
 	-- If the Split Stack modifier is held, increment by stackCount; else increment by minSplit
-	StackSplitFrame.split = StackSplitFrame.split + (IsModifiedClick("SPLITSTACK") and StackSplitFrame.BulkBuy_stackCount or StackSplitFrame.minSplit)
+	StackSplitFrame.split = StackSplitFrame.split +
+		(IsModifiedClick("SPLITSTACK") and StackSplitFrame.BulkBuy_stackCount or StackSplitFrame.minSplit)
 	StackSplitFrame.split = math.min(StackSplitFrame.split, StackSplitFrame.maxStack)
-	StackSplitFrame:UpdateStackText()
+	StackSplitFrame_UpdateStackText()
 
 	if StackSplitFrame.split == StackSplitFrame.maxStack then
-		StackSplitFrame.RightButton:Disable()
+		local button = StackSplitFrame.RightButton or StackSplitRightButton
+
+		button:Disable()
 	end
 
 	StackSplitFrame.LeftButton:Enable()
