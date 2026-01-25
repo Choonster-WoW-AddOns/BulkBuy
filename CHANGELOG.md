@@ -1,3 +1,7 @@
+## 1.13
+
+- Bump TOC Interface version for Retail, Classic, TBC Classic and MoP Classic
+
 ## 1.12
 
 - Fix errors in Classic
