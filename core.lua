@@ -30,6 +30,16 @@ if false then
 end
 --@end-debug@
 
+--@alpha@
+local DEBUG = true
+
+local function debugprint(...)
+	if DEBUG then
+		print("BulkBuy:", ...)
+	end
+end
+--@end-alpha@
+
 ---@type fun(index: number, quantity?: number)
 local _BuyMerchantItem
 
@@ -71,20 +81,48 @@ local function BulkBuyMerchantItem(index, quantity)
 	local stackSize = GetMerchantItemMaxStack(index)
 	local info      = C_MerchantFrame_GetItemInfo(index)
 
+	--@alpha@
+	debugprint(
+		"BulkBuyMerchantItem",
+		"index:", index, "quantity:", quantity, "info.name:", info.name,
+		"info.price:", info.price, "info.stackCount", info.stackCount
+	)
+	--@end-alpha@
+
 	-- If the item is sold for a non-gold currency and can only be bought in stacks of `stackCount`, buy the largest multiple of `stackCount` less than `amount` possible.
 	if info.price <= 0 then
 		quantity = math.floor(quantity / info.stackCount) * info.stackCount
+
+		--@alpha@
+		debugprint("BulkBuyMerchantItem", "Has non-gold currency, new quantity is:", quantity)
+		--@end-alpha@
 	end
 
 	-- Otherwise the item is sold for gold, so buy `amount` items
 
 	while quantity > stackSize do -- Buy as many full stacks as we can
+		--@alpha@
+		debugprint("BulkBuyMerchantItem", "Buying stack, current quantity is:", quantity)
+		--@end-alpha@
+
 		_BuyMerchantItem(index, stackSize)
 		quantity = quantity - stackSize
+
+		--@alpha@
+		debugprint("BulkBuyMerchantItem", "Bought stack, remaining quantity is:", quantity)
+		--@end-alpha@
 	end
 
 	if quantity > 0 then -- Buy any leftover items
+		--@alpha@
+		debugprint("BulkBuyMerchantItem", "Buying leftover, current quantity is:", quantity)
+		--@end-alpha@
+
 		_BuyMerchantItem(index, quantity)
+
+		--@alpha@
+		debugprint("BulkBuyMerchantItem", "Bought leftover")
+		--@end-alpha@
 	end
 end
 
@@ -102,10 +140,22 @@ end
 ---@param split number
 local function MerchantItemButton_SplitStack(self, split)
 	if self.extendedCost then
+		--@alpha@
+		debugprint("MerchantItemButton_SplitStack", "Has extendedCost", self:GetName(), split)
+		--@end-alpha@
+
 		MerchantFrame_ConfirmExtendedBulkItemCost(self, split)
 	elseif self.showNonrefundablePrompt then
+		--@alpha@
+		debugprint("MerchantItemButton_SplitStack", "Has showNonrefundablePrompt", self:GetName(), split)
+		--@end-alpha@
+
 		MerchantFrame_ConfirmExtendedBulkItemCost(self, split)
 	elseif split > 0 then
+		--@alpha@
+		debugprint("MerchantItemButton_SplitStack", "Has split > 0", self:GetName(), split)
+		--@end-alpha@
+
 		SetBuyMerchantItem()
 		BulkBuyMerchantItem(self:GetID(), split)
 	end
