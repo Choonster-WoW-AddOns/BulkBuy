@@ -1,3 +1,10 @@
+## 1.14
+
+- Bump TOC Interface version for Retail, Classic, TBC Classic and MoP Classic
+- Add TOC Interface version for Forever
+  - Thanks to Evan Cobb for the [PR](https://github.com/Choonster-WoW-AddOns/BulkBuy/pull/3)
+- Use a single TOC with multiple Interface versions
+
 ## 1.13
 
 - Bump TOC Interface version for Retail, Classic, TBC Classic and MoP Classic
