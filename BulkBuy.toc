@@ -1,10 +1,10 @@
-﻿## Interface: 120000
+﻿## Interface: 120105
 ## Interface-Forever: 16001
-## Interface-Classic: 11508
-## Interface-BCC: 20505
+## Interface-Classic: 11509
+## Interface-BCC: 20506
 ## Interface-Wrath: 30403
 ## Interface-Cata: 40402
-## Interface-Mists: 50503
+## Interface-Mists: 50504
 ## Title: Bulk Buy
 ## Version: @project-version@
 ## Author: Choonster
