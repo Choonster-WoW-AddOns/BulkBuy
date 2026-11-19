@@ -1,10 +1,4 @@
-﻿## Interface: 120105
-## Interface-Forever: 16001
-## Interface-Classic: 11509
-## Interface-BCC: 20506
-## Interface-Wrath: 30403
-## Interface-Cata: 40402
-## Interface-Mists: 50504
+﻿## Interface: 120105, 16001, 11509, 20506, 30403, 40402, 50504
 ## Title: Bulk Buy
 ## Version: @project-version@
 ## Author: Choonster

@@ -8,5 +8,3 @@ manual-changelog:
    markup-type: markdown
 
 enable-nolib-creation: no
-
-enable-toc-creation: yes
